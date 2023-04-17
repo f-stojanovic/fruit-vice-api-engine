@@ -21,6 +21,11 @@ class FavoriteFruitRepository extends ServiceEntityRepository
         parent::__construct($registry, FavoriteFruit::class);
     }
 
+    /**
+     * @param FavoriteFruit $entity
+     * @param bool $flush
+     * @return void
+     */
     public function save(FavoriteFruit $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
@@ -30,6 +35,11 @@ class FavoriteFruitRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * @param FavoriteFruit $entity
+     * @param bool $flush
+     * @return void
+     */
     public function remove(FavoriteFruit $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);

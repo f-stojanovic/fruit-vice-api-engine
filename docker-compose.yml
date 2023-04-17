@@ -1,0 +1,44 @@
+version: '3'
+services:
+  nginx:
+    image: nginx:1.17
+    ports:
+      - "80:80"
+    volumes:
+      - "./docker-configs/nginx.conf:/etc/nginx/conf.d/default.conf"
+      - ".:/app:cached"
+  php:
+    build:
+      context: ./docker-configs/php
+    volumes:
+      - "./docker-configs/php/php.ini:/usr/local/etc/php/conf.d/php.ini"
+      - ".:/app:cached"
+    environment:
+      PHP_IDE_CONFIG: "serverName=Docker"
+
+  database:
+    image: mysql:5.7
+    platform: linux/amd64
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: fruit_vice_db
+      MYSQL_PASSWORD: root
+    ports:
+      - 3306:3306
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+
+  rabbitmq:
+    image: rabbitmq:3.8
+    hostname: rabbitmq
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ./rabbitmq-data:/var/lib/rabbitmq
+
+networks:
+  default:
+    driver: bridge

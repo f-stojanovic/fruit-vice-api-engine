@@ -78,7 +78,6 @@ class FavoriteFruitService
     }
 
     /**
-     * @param array $favoriteFruitIds
      * @return array|int[]
      */
     public function getSumOfNutritionFacts(): array
