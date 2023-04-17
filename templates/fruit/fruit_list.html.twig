@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-12">
+            <div id="fruits" class="box">
+                <div class="box-header">
+                    <h3 class="box-title">Fruits<br></h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body table-responsive no-padding">
+                    <table class="table table-condensed">
+                        <tbody>
+                        <tr class="text-centar">
+                            <th class="text-center">Name</th>
+                            <th class="text-center">Family</th>
+                            <th class="text-center">Order</th>
+                            <th class="text-center">Genus</th>
+                            <th class="text-center">Calories</th>
+                            <th class="text-center">Fat</th>
+                            <th class="text-center">Sugar</th>
+                            <th class="text-center">Carbohydrates</th>
+                            <th class="text-center">Protein</th>
+                        </tr>
+                        {% for fruit in fruits %}
+                            <tr>
+                                <td>{{ fruit.name }}</td>
+                                <td>{{ fruit.family }}</td>
+                                <td>{{ fruit.order }}</td>
+                                <td>{{ fruit.genus }}</td>
+                                <td>{{ fruit.calories }}</td>
+                                <td>{{ fruit.fat }}</td>
+                                <td>{{ fruit.sugar }}</td>
+                                <td>{{ fruit.carbohydrates }}</td>
+                                <td>{{ fruit.protein }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="box-footer clearfix">
+                        <nav>
+                            <ul class="pagination">
+                                {% if page > 1 %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ path('fruit_list', {'page': page - 1, 'limit': limit}) }}" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+
+                                {% for p in 1..totalPages %}
+                                    <li class="page-item{% if p == page %} active{% endif %}">
+                                        <a class="page-link" href="{{ path('fruit_list', {'page': p, 'limit': limit}) }}">{{ p }}</a>
+                                    </li>
+                                {% endfor %}
+
+                                {% if page < totalPages %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ path('fruit_list', {'page': page + 1, 'limit': limit}) }}" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="text-right">
+                    <a href="{{ path('filter_fruits') }}" class="btn btn-primary btn-md">Filter Fruits</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% block content %}
+        <h1>Filter Fruits</h1>
+
+        {{ form_start(fruitFilterForm) }}
+        {{ form_row(fruitFilterForm.name) }}
+        {{ form_row(fruitFilterForm.family) }}
+        {{ form_row(fruitFilterForm.submit) }}
+        {{ form_end(fruitFilterForm) }}
+
+        {% if fruits|length > 0 %}
+            <h2>Filtered Fruits:</h2>
+            <ul>
+                {% for fruit in fruits %}
+                    <li>{{ fruit.id }} - {{ fruit.name }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endblock %}
+
+    <h2>Add to Favorites:</h2>
+
+    {{ form_start(favoriteFruitForm) }}
+    {{ form_label(favoriteFruitForm.name) }}
+    {{ form_widget(favoriteFruitForm.name) }}
+    {{ form_end(favoriteFruitForm) }}
+
+    <h5>
+    {% if app.session.flashbag.has('error') %}
+        {% for message in app.session.flashbag.get('error') %}
+            {{ message }}
+        {% endfor %}
+    {% endif %}
+    </h5>
+
+    <h5>
+        {% if app.session.flashbag.has('success') %}
+            {% for message in app.session.flashbag.get('success') %}
+                {{ message }}
+            {% endfor %}
+        {% endif %}
+    </h5>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="text-right">
+                <a href="{{ path('favourite_fruit_list') }}" class="btn btn-primary btn-md">Favourite Fruits page</a>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+

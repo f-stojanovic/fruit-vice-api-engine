@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-12">
+            <div id="aircraft" class="box">
+                <div class="box-header">
+                    <h3 class="box-title">Favourite Fruits<br></h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body table-responsive no-padding">
+                    <table class="table table-condensed">
+                        <tbody>
+                        <tr class="text-centar">
+                            <th class="text-center">Name</th>
+                            <th class="text-center">Family</th>
+                            <th class="text-center">Order</th>
+                            <th class="text-center">Genus</th>
+                        </tr>
+                        {% for fruit in favouriteFruits %}
+                            <tr>
+                                <td>{{ fruit.name }}</td>
+                                <td>{{ fruit.family }}</td>
+                                <td>{{ fruit.order }}</td>
+                                <td>{{ fruit.genus }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <table class="table table-condensed">
+                        <div class="box-header">
+                            <h3 class="box-title">Nutrition facts of all fruits<br></h3>
+                        </div>
+                        <tbody>
+                        <tr class="text-centar">
+                            <th class="text-center">Calories</th>
+                            <th class="text-center">Fat</th>
+                            <th class="text-center">Sugar</th>
+                            <th class="text-center">Carbohydrates</th>
+                            <th class="text-center">Protein</th>
+                        </tr>
+                            <tr>
+                                <td>{{ allNutritionFacts.nutrition_facts.calories }}</td>
+                                <td>{{ allNutritionFacts.nutrition_facts.fat }}</td>
+                                <td>{{ allNutritionFacts.nutrition_facts.sugar }}</td>
+                                <td>{{ allNutritionFacts.nutrition_facts.carbohydrates }}</td>
+                                <td>{{ allNutritionFacts.nutrition_facts.protein }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="text-right">
+                    <a href="{{ path('fruit_list') }}" class="btn btn-primary btn-md">Back to Fruits page</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
