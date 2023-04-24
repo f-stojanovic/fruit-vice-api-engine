@@ -2,41 +2,37 @@
 
 namespace App\Service;
 
-use App\Entity;
-use App\Repository\FavoriteFruitRepository;
 use App\Repository\FruitRepository;
 
 class FavoriteFruitService
 {
-    /**
-     * @var FavoriteFruitRepository
-     */
-    private FavoriteFruitRepository $favoriteFruitRepository;
-
-    /**
-     * @var FruitRepository
-     */
-    private FruitRepository $fruitRepository;
-
     public function __construct(
-        FavoriteFruitRepository $favoriteFruitRepository,
-        FruitRepository $fruitRepository
-    ) {
-        $this->favoriteFruitRepository = $favoriteFruitRepository;
-        $this->fruitRepository         = $fruitRepository;
-    }
+       private readonly FruitRepository $fruitRepository
+    ) { }
 
     /**
-     * @param $favoriteFruits
+     * @param array $favoriteFruits
+     * @param int $maxFruits
      * @return void
      */
-    public function saveFavouriteFruits($favoriteFruits): void
+    public function saveFavouriteFruits(array $favoriteFruits, int $maxFruits = 10): void
     {
-        foreach ($favoriteFruits as $item) {
-            $favouriteFruit = new Entity\FavoriteFruit();
-            $favouriteFruit->setFruit($item);
+        if (count($favoriteFruits) > $maxFruits) {
+            throw new \InvalidArgumentException("You can only select up to $maxFruits fruits as favorites.");
+        }
 
-            $this->favoriteFruitRepository->save($favouriteFruit, true);
+        // First clear previously saved favourite fruits
+        $this->clearFavouriteFruits();
+
+        foreach ($favoriteFruits as $favoriteFruit) {
+            $fruit = $this->fruitRepository->findOneBy(['name' => $favoriteFruit->getName()]);
+            if (!$fruit) {
+                throw new \InvalidArgumentException("Fruit with name '{$favoriteFruit->getName()}' does not exist.");
+            }
+
+            $fruit->setIsFavorite(true);
+
+            $this->fruitRepository->save($fruit, true);
         }
     }
 
@@ -45,11 +41,11 @@ class FavoriteFruitService
      */
     public function clearFavouriteFruits(): void
     {
-        $favouriteFruits = $this->favoriteFruitRepository->findAll();
+        $favouriteFruits = $this->fruitRepository->findBy(['isFavorite' => true]);
 
         if (count($favouriteFruits) > 0) {
-            foreach ($favouriteFruits as $item) {
-                $this->favoriteFruitRepository->remove($item, true);
+            foreach ($favouriteFruits as $favouriteFruit) {
+                $favouriteFruit->setIsFavorite(false);
             }
         }
     }
@@ -59,11 +55,11 @@ class FavoriteFruitService
      */
     public function getAllFavouriteFruits(): mixed
     {
-        $allFavouriteFruits = $this->favoriteFruitRepository->findAll();
+        $allFavouriteFruits = $this->fruitRepository->findBy(['isFavorite' => true]);
 
         $favoriteFruitIds = array();
         foreach ($allFavouriteFruits as $favoriteFruit) {
-            $favoriteFruitIds[] = $favoriteFruit->getFruit()->getId();
+            $favoriteFruitIds[] = $favoriteFruit->getId();
         }
 
         if (!empty($favoriteFruitIds)) {
@@ -82,11 +78,11 @@ class FavoriteFruitService
      */
     public function getSumOfNutritionFacts(): array
     {
-        $allFavouriteFruits = $this->favoriteFruitRepository->findAll();
+        $allFavouriteFruits = $this->fruitRepository->findBy(['isFavorite' => true]);
 
         $favoriteFruitIds = array();
         foreach ($allFavouriteFruits as $favoriteFruit) {
-            $favoriteFruitIds[] = $favoriteFruit->getFruit()->getId();
+            $favoriteFruitIds[] = $favoriteFruit->getId();
         }
 
         if (count($favoriteFruitIds) > 0) {
