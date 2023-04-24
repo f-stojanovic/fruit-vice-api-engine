@@ -3,7 +3,7 @@
 namespace App\Command;
 
 use App\Message\EmailNotification;
-use App\Service\FruityViceApiService;
+use App\Service\FruitTablePopulatorService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -14,27 +14,10 @@ class FruitsFetchCommand extends Command
 {
     protected static $defaultName = 'fruits:fetch';
 
-    /**
-     * @var FruityViceApiService
-     */
-    private FruityViceApiService $fruityViceApiService;
-
-    /**
-     * @var MessageBusInterface
-     */
-    private MessageBusInterface $messageBus;
-
-    /**
-     * @param FruityViceApiService $fruityViceApiService;
-     */
     public function __construct(
-        FruityViceApiService $fruityViceApiService,
-        MessageBusInterface  $messageBus
-    ) {
-        parent::__construct();
-        $this->fruityViceApiService = $fruityViceApiService;
-        $this->messageBus           = $messageBus;
-    }
+        private readonly FruitTablePopulatorService $fruitTablePopulatorService,
+        private readonly MessageBusInterface $messageBus
+    ) { parent::__construct(); }
 
     protected function configure(): void
     {
@@ -48,7 +31,7 @@ class FruitsFetchCommand extends Command
         $ioStream->title("FILLING FRUITS TABLE");
         try {
 
-            $this->fruityViceApiService->populateFruitsTable();
+            $this->fruitTablePopulatorService->populate();
 
             $this->messageBus->dispatch(new EmailNotification(
                 'fylyp458@gmail.com',
