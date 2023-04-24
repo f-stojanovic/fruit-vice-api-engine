@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Add Favorite Fruits{% endblock %}
+
+{% block body %}
+    <h1>Add Favorite Fruits</h1>
+    {{ form_start(favoriteFruitForm) }}
+    <div class="form-group">
+        {{ form_label(favoriteFruitForm.name, 'Favorite Fruits') }}
+        {{ form_widget(favoriteFruitForm.name, { 'attr': {'class': 'form-control', 'multiple': true} }) }}
+        {{ form_errors(favoriteFruitForm.name) }}
+    </div>
+    <button type="submit" class="btn btn-primary">Add to Favorites</button>
+
+    <h5>
+        {% if app.session.flashbag.has('error') %}
+            {% for message in app.session.flashbag.get('error') %}
+                {{ message }}
+            {% endfor %}
+        {% endif %}
+    </h5>
+
+    <h5>
+        {% if app.session.flashbag.has('success') %}
+            {% for message in app.session.flashbag.get('success') %}
+                {{ message }}
+            {% endfor %}
+        {% endif %}
+    </h5>
+
+    <a href="{{ path('favourite_fruit_list') }}" class="btn btn-primary btn-md">Favourite Fruits page</a>
+    {{ form_end(favoriteFruitForm) }}
+{% endblock %}
