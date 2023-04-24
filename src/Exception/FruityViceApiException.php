@@ -12,8 +12,8 @@ class FruityViceApiException extends Exception
      * @param int $code
      * @param Throwable|null $previous
      */
-    public function __construct($message = "", $code = 0, Throwable $previous = null)
+    public function __construct(string $message = "", int $code = 0, Throwable $previous = null)
     {
-        $this->message = 'FRUITY_VICE API EXCEPTION: ' . $message;
+        parent::__construct("FRUITY_VICE API EXCEPTION: " . $message, $code, $previous);
     }
 }
