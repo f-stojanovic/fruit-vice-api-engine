@@ -2,71 +2,23 @@
 
 namespace App\Service;
 
-use App\Entity;
 use App\Exception\FruityViceApiException;
-use App\Repository\FruitRepository;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-use Throwable;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 
 class FruityViceApiService
 {
-    /**
-     * @var string
-     */
-    private string $fruityViceApiEndpoint;
-
-    /**
-     * @var FruitRepository
-     */
-    private FruitRepository $fruitRepository;
-
-    /**
-     * @var LoggerInterface
-     */
-    private LoggerInterface $logger;
-
     public function __construct(
-        $fruityViceApiEndpoint,
-        FruitRepository $fruitRepository,
-        LoggerInterface $logger
-    ) {
-        $this->fruityViceApiEndpoint = $fruityViceApiEndpoint;
-        $this->fruitRepository       = $fruitRepository;
-        $this->logger                = $logger;
-    }
-
-    /**
-     * @return void
-     * @throws FruityViceApiException
-     */
-    public function populateFruitsTable(): void
-    {
-        $fruits = $this->getAllFruits();
-
-        foreach ($fruits as $item) {
-
-            $fruit = new Entity\Fruit();
-
-            $fruit->setName($item['name']);
-            $fruit->setFamily($item['family']);
-            $fruit->setOrder($item['order']);
-            $fruit->setGenus($item['genus']);
-
-            $nutritions = $item['nutritions'];
-            $fruit->setCalories($nutritions['calories']);
-            $fruit->setFat($nutritions['fat']);
-            $fruit->setSugar($nutritions['sugar']);
-            $fruit->setCarbohydrates($nutritions['carbohydrates']);
-            $fruit->setProtein($nutritions['protein']);
-
-            $this->fruitRepository->save($fruit, true);
-        }
-    }
+        private readonly string                   $fruityViceApiEndpoint,
+        private readonly HttpClientInterface      $httpClient,
+        private readonly LoggerInterface          $logger
+    ) { }
 
     /**
      * @return array
@@ -81,9 +33,9 @@ class FruityViceApiService
                     'Content-type' => 'application/json'
                 ],
             ]);
-        } catch (Throwable $e) {
+        } catch (ExceptionInterface $e) {
             $this->logger->error($e->getMessage());
-            throw new FruityViceApiException("Url not found");
+            throw new FruityViceApiException('Failed to fetch fruits', 0, $e);
         }
         return $response;
     }
@@ -97,10 +49,11 @@ class FruityViceApiService
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
+     * @throws DecodingExceptionInterface
      */
     private function request(string $method, string $url, array $options = []): array
     {
-        $response = HttpClient::create(['base_uri' => $this->fruityViceApiEndpoint])->request($method, $url, $options);
-        return json_decode($response->getContent(false), true) ?? [];
+        $response = $this->httpClient->request($method, $this->fruityViceApiEndpoint . $url, $options);
+        return $response->toArray() ?? [];
     }
 }
