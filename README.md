@@ -3,9 +3,9 @@
 **Symfony 5.4 project**
 
 ### Environment
-- nginx 1.17
-- php-fpm 8.1
-- mysql
+- nginx 1.23.4
+- php-fpm 8.1.18
+- mysql 8.0
 
 ### Requirements
 Docker compose, Git and as the main IDE is PhpStorm (preferably the latest version with Shell Configuration supports).
