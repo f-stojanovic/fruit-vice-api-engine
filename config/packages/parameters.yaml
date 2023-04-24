@@ -1,0 +1,4 @@
+# config/packages/parameters.yaml
+
+parameters:
+  email_from: 'test@gmail.com'
