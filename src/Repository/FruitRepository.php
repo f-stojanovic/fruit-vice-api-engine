@@ -6,6 +6,7 @@ use App\Entity\Fruit;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
+use Exception;
 
 /**
  * @extends ServiceEntityRepository<Fruit>
@@ -15,7 +16,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Fruit[]    findAll()
  * @method Fruit[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class FruitRepository extends ServiceEntityRepository
+class FruitRepository extends ServiceEntityRepository implements FruitRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -26,7 +27,7 @@ class FruitRepository extends ServiceEntityRepository
      * @param int $page
      * @param int $limit
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     public function findAllFruitsPaginated(int $page = 1, int $limit = 10): array
     {
@@ -42,18 +43,23 @@ class FruitRepository extends ServiceEntityRepository
         return $paginator->getIterator()->getArrayCopy();
     }
 
-    public function save(Fruit $entity, bool $flush = false): void
+    public function findByName(string $name): ?Fruit
     {
-        $this->getEntityManager()->persist($entity);
+        return $this->findOneBy(['name' => $name]);
+    }
+
+    public function save(Fruit $fruit, bool $flush = false): void
+    {
+        $this->getEntityManager()->persist($fruit);
 
         if ($flush) {
             $this->getEntityManager()->flush();
         }
     }
 
-    public function remove(Fruit $entity, bool $flush = false): void
+    public function remove(Fruit $fruit, bool $flush = false): void
     {
-        $this->getEntityManager()->remove($entity);
+        $this->getEntityManager()->remove($fruit);
 
         if ($flush) {
             $this->getEntityManager()->flush();
