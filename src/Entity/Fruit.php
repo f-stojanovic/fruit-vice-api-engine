@@ -40,6 +40,37 @@ class Fruit
     #[ORM\Column(type: "float")]
     private float $protein;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $isFavorite = false;
+
+    public static function create(
+        string $name,
+        string $family,
+        string $fruitOrder,
+        string $genus,
+        int $calories,
+        float $fat,
+        float $sugar,
+        float $carbohydrates,
+        float $protein,
+        bool $isFavorite = false
+    ): self {
+        $fruit = new static();
+
+        $fruit->name = $name;
+        $fruit->family = $family;
+        $fruit->fruitOrder = $fruitOrder;
+        $fruit->genus = $genus;
+        $fruit->calories = $calories;
+        $fruit->fat = $fat;
+        $fruit->sugar = $sugar;
+        $fruit->carbohydrates = $carbohydrates;
+        $fruit->protein = $protein;
+        $fruit->isFavorite = $isFavorite;
+
+        return $fruit;
+    }
+
     public function getId(): int
     {
         return $this->id;
@@ -138,5 +169,15 @@ class Fruit
     public function setProtein(float $protein): void
     {
         $this->protein = $protein;
+    }
+
+    public function isFavorite(): bool
+    {
+        return $this->isFavorite;
+    }
+
+    public function setIsFavorite(bool $isFavorite): void
+    {
+        $this->isFavorite = $isFavorite;
     }
 }
