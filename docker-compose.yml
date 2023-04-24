@@ -1,7 +1,7 @@
 version: '3'
 services:
   nginx:
-    image: nginx:1.17
+    image: nginx:latest
     ports:
       - "80:80"
     volumes:
@@ -17,7 +17,7 @@ services:
       PHP_IDE_CONFIG: "serverName=Docker"
 
   database:
-    image: mysql:5.7
+    image: mysql:8.0
     platform: linux/amd64
     environment:
       MYSQL_ROOT_PASSWORD: root
